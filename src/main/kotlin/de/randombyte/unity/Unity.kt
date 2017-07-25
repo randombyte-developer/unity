@@ -9,7 +9,6 @@ import de.randombyte.unity.Unity.Companion.ID
 import de.randombyte.unity.Unity.Companion.NAME
 import de.randombyte.unity.Unity.Companion.VERSION
 import de.randombyte.unity.commands.*
-import de.randombyte.unity.commands.commandelement.UnityRequesters
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import org.slf4j.Logger
@@ -18,6 +17,7 @@ import org.spongepowered.api.command.args.GenericArguments.player
 import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.event.Listener
+import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GameStartingServerEvent
@@ -73,11 +73,16 @@ class Unity @Inject constructor(
     @Listener
     fun onReload(event: GameReloadEvent) {
         configManager.generate()
+        unityRequests.clear()
 
         logger.info("Reloaded!")
     }
 
     private fun registerCommands() {
+        val removeRequest = { requester: UUID, requestee: UUID ->
+            unityRequests += (requestee to (unityRequests[requestee] ?: emptyList()).filterNot { it == requester })
+        }
+
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 // the root unity/marry command is the 'request unity'-command
                 .permission(PLAYER_PERMISSION)
@@ -85,7 +90,10 @@ class Unity @Inject constructor(
                 .executor(RequestUnityCommand(
                         configManager,
                         addRequest = { requester, requestee ->
-                            unityRequests += (requestee to ((unityRequests[requestee] ?: emptyList()) + requester))
+                            val exisitingRequesters = unityRequests[requestee] ?: emptyList()
+                            if (requester in exisitingRequesters) return@RequestUnityCommand false
+                            unityRequests += (requestee to (exisitingRequesters + requester))
+                            return@RequestUnityCommand true
                         }
                 ))
 
@@ -95,17 +103,19 @@ class Unity @Inject constructor(
                         .build(), "help")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
-                        .arguments(UnityRequesters(PLAYER_ARG.toText(),
-                                getRequestsToPlayer = { player ->
-                                    unityRequests[player.uniqueId] ?: emptyList()
-                                }))
-                        .executor(AcceptUnityCommand(
-                                configManager,
-                                removeRequest = { requester, requestee ->
-                                    unityRequests += (requestee to (unityRequests[requestee] ?: emptyList()) - requester)
-                                }
-                        ))
+                        .arguments(player(PLAYER_ARG.toText()))
+                        .executor(AcceptRequestCommand(configManager, this::unityRequests, removeRequest))
                         .build(), "accept")
+                .child(CommandSpec.builder()
+                        .permission(PLAYER_PERMISSION)
+                        .arguments(player(PLAYER_ARG.toText()))
+                        .executor(DeclineRequestCommand(configManager, this::unityRequests, removeRequest))
+                        .build(), "decline")
+                .child(CommandSpec.builder()
+                        .permission(PLAYER_PERMISSION)
+                        .arguments(player(PLAYER_ARG.toText()))
+                        .executor(CancelRequestCommand(configManager, this::unityRequests, removeRequest))
+                        .build(), "cancel")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
                         .executor(ListUnitiesCommand(configManager))
@@ -120,7 +130,7 @@ class Unity @Inject constructor(
                         .build(), "teleport", "tp")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
-                        .executor(GiftCommand())
+                        .executor(GiftCommand(configManager, Cause.source(this).build()))
                         .build(), "gift")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)

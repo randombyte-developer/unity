@@ -8,6 +8,12 @@ import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.text.Text
 import java.util.*
 
+fun Player.checkRequester(requestee: Player, requests: Map<UUID, List<UUID>>): Boolean {
+    if (this == requestee) return false
+    val requestsToPlayer = requests[requestee.uniqueId] ?: emptyList()
+    return this.uniqueId in requestsToPlayer
+}
+
 fun requireSingle(commandSource: Player, otherPlayer: Player, unities: List<Config.Unity>) {
     with(unities) {
         if (!isSingle(commandSource.uniqueId)) throw CommandException("You must be single to execute this command!".toText())

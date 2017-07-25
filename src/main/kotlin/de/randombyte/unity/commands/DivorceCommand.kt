@@ -14,14 +14,7 @@ class DivorceCommand(
         val newConfig = config.copy(unities = config.unities - thisUnity)
         configManager.save(newConfig)
 
-        val otherMember = with(thisUnity) {
-            when {
-                thisUnity.member1 == player.uniqueId -> thisUnity.member2
-                thisUnity.member2 == player.uniqueId -> thisUnity.member1
-                else -> throw RuntimeException("Getting other member failed, report to developer!")
-            }
-        }
-
+        val otherMember = thisUnity.getOtherMember(player.uniqueId)
         val otherMemberName = otherMember.getUser()?.name ?: "Unknown"
 
         val divorceBroadcast = config.texts.divorceBroadcast.apply(mapOf(
