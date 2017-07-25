@@ -36,7 +36,7 @@ class Unity @Inject constructor(
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "0.1"
+        const val VERSION = "0.2"
         const val AUTHOR = "RandomByte"
 
         const val ROOT_PERMISSION = ID
@@ -99,7 +99,7 @@ class Unity @Inject constructor(
 
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
-                        .executor(RootHelpCommand())
+                        .executor(HelpCommand(configManager))
                         .build(), "help")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
@@ -126,7 +126,7 @@ class Unity @Inject constructor(
                         .build(), "divorce")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
-                        .executor(TeleportCommand())
+                        .executor(TeleportCommand(configManager))
                         .build(), "teleport", "tp")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)

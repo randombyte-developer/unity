@@ -72,6 +72,19 @@ data class Config(
             ),
             @Setting val receivedGift: TextTemplate = fixedTextTemplateOf(
                     "Received gift from".aqua(), "otherMember".toArg().white(), "!".aqua()
+            ),
+
+            @Setting val helpCommandTitle: Text = "Marriages".yellow(),
+            @Setting val helpCommandEntries: List<Text> = listOf(
+                    "- /marry help - Shows this page".toText(),
+                    "- /marry <name> - Marry a player".toText(),
+                    "- /marry accept - Accept the proposal".toText(),
+                    "- /marry decline - Decline the proposal".toText(),
+                    "- /marry divorce - Divorce from your partner".toText(),
+                    "- /marry tp - Teleport to your partner".toText(),
+                    "- /marry gift - Gift the item you are holding to your partner".toText(),
+                    "- /marry home - Teleport to the couple's home".toText(),
+                    "- /marry home set - Set the couple's home".toText()
             )
     )
 }
