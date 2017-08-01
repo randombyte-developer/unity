@@ -61,7 +61,6 @@ class Unity @Inject constructor(
         registerCommands()
 
         logger.info("Loaded $NAME: $VERSION")
-
     }
 
     @Listener
