@@ -6,12 +6,16 @@ plugins {
 }
 
 group "de.randombyte"
-version "0.2"
+version "1.0"
 
 repositories {
     jcenter()
     maven { url "https://repo.spongepowered.org/maven/" }
     maven { url "https://jitpack.io" }
+    maven {
+        name = "nucleus"
+        url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
+    }
 }
 
 configurations {
@@ -23,6 +27,7 @@ dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.2-5"
     kapt "org.spongepowered:spongeapi:5.1.0"
     shadow("com.github.randombyte-developer.kosp:kosp:v0.5.4.1") { transitive = false }
+    compile "io.github.nucleuspowered:nucleus-api:1.1.7-LTS-S5.1"
 }
 
 jar.enabled = false

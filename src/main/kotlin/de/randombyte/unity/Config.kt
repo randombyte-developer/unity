@@ -16,7 +16,8 @@ import java.util.*
 data class Config(
         @Setting val unities: List<Unity> = emptyList(),
         @Setting val texts: Texts = Config.Texts(),
-        @Setting val divorceCooldown: Duration = Duration.ofDays(1)
+        @Setting val divorceCooldown: Duration = Duration.ofDays(1),
+        @Setting val marriedPrefix: Text = "[".red() + "♥".darkRed() + "]".red()
 ) {
     @ConfigSerializable
     data class Unity(

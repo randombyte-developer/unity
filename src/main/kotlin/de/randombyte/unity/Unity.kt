@@ -3,12 +3,15 @@ package de.randombyte.unity
 import com.google.inject.Inject
 import de.randombyte.kosp.bstats.BStats
 import de.randombyte.kosp.config.ConfigManager
+import de.randombyte.kosp.extensions.toOptional
 import de.randombyte.kosp.extensions.toText
 import de.randombyte.unity.Unity.Companion.AUTHOR
 import de.randombyte.unity.Unity.Companion.ID
 import de.randombyte.unity.Unity.Companion.NAME
+import de.randombyte.unity.Unity.Companion.NUCLEUS_ID
 import de.randombyte.unity.Unity.Companion.VERSION
 import de.randombyte.unity.commands.*
+import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import org.slf4j.Logger
@@ -16,28 +19,37 @@ import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments.player
 import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.DefaultConfig
+import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.cause.Cause
+import org.spongepowered.api.event.filter.Getter
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GameStartingServerEvent
+import org.spongepowered.api.event.service.ChangeServiceProviderEvent
+import org.spongepowered.api.plugin.Dependency
 import org.spongepowered.api.plugin.Plugin
+import org.spongepowered.api.plugin.PluginContainer
 import java.util.*
 
 @Plugin(id = ID,
         name = NAME,
         version = VERSION,
-        authors = arrayOf(AUTHOR))
+        authors = arrayOf(AUTHOR),
+        dependencies = arrayOf(Dependency(id = NUCLEUS_ID, optional = true)))
 class Unity @Inject constructor(
         val logger: Logger,
         @DefaultConfig(sharedRoot = true) configurationLoader: ConfigurationLoader<CommentedConfigurationNode>,
-        val bStats: BStats
+        val bStats: BStats,
+        val pluginContainer: PluginContainer
 ) {
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "0.2"
+        const val VERSION = "1.0"
         const val AUTHOR = "RandomByte"
+
+        const val NUCLEUS_ID = "nucleus"
 
         const val ROOT_PERMISSION = ID
         const val PLAYER_PERMISSION = "$ROOT_PERMISSION.player"
@@ -75,6 +87,20 @@ class Unity @Inject constructor(
         unityRequests.clear()
 
         logger.info("Reloaded!")
+    }
+
+    @Listener
+    fun onChangeServiceProvider(event: ChangeServiceProviderEvent, @Getter("getNewProvider") messageTokenService: NucleusMessageTokenService) {
+        messageTokenService.register(pluginContainer, NucleusMessageTokenService.TokenParser { tokenInput, source, _ ->
+            if (tokenInput != "marry" || source !is Player) return@TokenParser Optional.empty()
+
+            val config = configManager.get()
+            if (config.unities.getUnity(source.uniqueId) == null) {
+                return@TokenParser Optional.empty()
+            }
+
+            return@TokenParser config.marriedPrefix.toOptional()
+        })
     }
 
     private fun registerCommands() {
