@@ -22,13 +22,13 @@ class GiftCommand(
 
         val otherMember = thisUnity.getOtherMember(player.uniqueId).getUser()!!
         val otherPlayer = otherMember.player
-                .orElseThrow { throw CommandException("'${otherMember.name}' must be online to excute this command!".toText()) }
+                .orElseThrow { throw CommandException("'${otherMember.name}' must be online to execute this command!".toText()) }
 
         otherPlayer.give(itemInHand, cause)
         player.setItemInHand(HandTypes.MAIN_HAND, null)
 
         otherPlayer.sendMessage(config.texts.receivedGift.apply(mapOf("otherMember" to player.name)).build())
-        player.sendMessage(config.texts.sentGift.apply(mapOf("otherMember" to player.name)).build())
+        player.sendMessage(config.texts.sentGift.apply(mapOf("otherMember" to otherPlayer.name)).build())
 
         return CommandResult.success()
     }
