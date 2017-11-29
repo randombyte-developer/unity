@@ -35,7 +35,7 @@ class RequestUnityCommand(
         val requestMessage = config.texts.gotRequest.apply(mapOf("requester" to player.name)).build()
         requestee.sendMessage(requestMessage + " " + acceptRequest + " " + declineRequest)
 
-        player.sendMessage(config.texts.sentRequest.apply(mapOf("requestee" to player.name)).build())
+        player.sendMessage(config.texts.sentRequest.apply(mapOf("requestee" to requestee.name)).build())
 
         broadcast(config.texts.requestBroadcast.apply(mapOf(
                 "requester" to player.name,
