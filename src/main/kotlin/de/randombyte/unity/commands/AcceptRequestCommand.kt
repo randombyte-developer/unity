@@ -9,6 +9,7 @@ import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
+import java.time.Instant
 import java.util.*
 
 class AcceptRequestCommand(
@@ -28,7 +29,8 @@ class AcceptRequestCommand(
         removeRequest(requester.uniqueId, player.uniqueId)
         val newConfig = config.copy(unities = config.unities + Config.Unity(
                 member1 = requester.uniqueId,
-                member2 = player.uniqueId
+                member2 = player.uniqueId,
+                date = Date.from(Instant.now())
         ))
         configManager.save(newConfig)
 

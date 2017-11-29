@@ -8,18 +8,22 @@ import org.spongepowered.api.text.Text
 import org.spongepowered.api.text.TextTemplate
 import org.spongepowered.api.world.Location
 import org.spongepowered.api.world.World
+import java.time.Duration
+import java.time.Instant
 import java.util.*
 
 @ConfigSerializable
 data class Config(
         @Setting val unities: List<Unity> = emptyList(),
-        @Setting val texts: Texts = Config.Texts()
+        @Setting val texts: Texts = Config.Texts(),
+        @Setting val divorceCooldown: Duration = Duration.ofDays(1)
 ) {
     @ConfigSerializable
     data class Unity(
             @Setting val member1: UUID = UUID(0, 0),
             @Setting val member2: UUID = UUID(0, 0),
-            @Setting val home: Location<World>? = null
+            @Setting val home: Location<World>? = null,
+            @Setting val date: Date = Date.from(Instant.EPOCH)
     ) {
         fun sendMessage(text: Text) {
             member1.getPlayer()?.sendMessage(text)
