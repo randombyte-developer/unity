@@ -1,7 +1,6 @@
 package de.randombyte.unity
 
 import com.google.inject.Inject
-import de.randombyte.kosp.bstats.BStats
 import de.randombyte.kosp.config.ConfigManager
 import de.randombyte.kosp.extensions.toOptional
 import de.randombyte.kosp.extensions.toText
@@ -21,7 +20,6 @@ import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.event.Listener
-import org.spongepowered.api.event.cause.Cause
 import org.spongepowered.api.event.filter.Getter
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
@@ -35,18 +33,17 @@ import java.util.*
 @Plugin(id = ID,
         name = NAME,
         version = VERSION,
-        authors = arrayOf(AUTHOR),
-        dependencies = arrayOf(Dependency(id = NUCLEUS_ID, optional = true)))
+        authors = [AUTHOR],
+        dependencies = [(Dependency(id = NUCLEUS_ID, optional = true))])
 class Unity @Inject constructor(
-        val logger: Logger,
+        private val logger: Logger,
         @DefaultConfig(sharedRoot = true) configurationLoader: ConfigurationLoader<CommentedConfigurationNode>,
-        val bStats: BStats,
-        val pluginContainer: PluginContainer
+        private val pluginContainer: PluginContainer
 ) {
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "1.0.1"
+        const val VERSION = "2.0"
         const val AUTHOR = "RandomByte"
 
         const val NUCLEUS_ID = "nucleus"
@@ -115,9 +112,9 @@ class Unity @Inject constructor(
                 .executor(RequestUnityCommand(
                         configManager,
                         addRequest = { requester, requestee ->
-                            val exisitingRequesters = unityRequests[requestee] ?: emptyList()
-                            if (requester in exisitingRequesters) return@RequestUnityCommand false
-                            unityRequests += (requestee to (exisitingRequesters + requester))
+                            val existingRequesters = unityRequests[requestee] ?: emptyList()
+                            if (requester in existingRequesters) return@RequestUnityCommand false
+                            unityRequests += (requestee to (existingRequesters + requester))
                             return@RequestUnityCommand true
                         }
                 ))
@@ -155,7 +152,7 @@ class Unity @Inject constructor(
                         .build(), "teleport", "tp")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)
-                        .executor(GiftCommand(configManager, Cause.source(this).build()))
+                        .executor(GiftCommand(configManager))
                         .build(), "gift")
                 .child(CommandSpec.builder()
                         .permission(PLAYER_PERMISSION)

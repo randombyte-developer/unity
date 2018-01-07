@@ -1,12 +1,12 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.1.2-5"
-    id "org.jetbrains.kotlin.kapt" version "1.1.2-5"
+    id "org.jetbrains.kotlin.jvm" version "1.2.10"
+    id "org.jetbrains.kotlin.kapt" version "1.2.10"
     id "com.github.johnrengelman.shadow" version "1.2.4"
     //id "flavor.pie.promptsign" version "1.0.2"
 }
 
 group "de.randombyte"
-version "1.0.1"
+version "2.0"
 
 repositories {
     jcenter()
@@ -24,10 +24,10 @@ configurations {
 }
 
 dependencies {
-    shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.2-5"
-    kapt "org.spongepowered:spongeapi:5.1.0"
-    shadow("com.github.randombyte-developer.kosp:kosp:v0.5.4.1") { transitive = false }
-    compile "io.github.nucleuspowered:nucleus-api:1.1.7-LTS-S5.1"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.10"
+    kapt "org.spongepowered:spongeapi:7.0.0"
+    shadow("com.github.randombyte-developer.kosp:kosp:v1.1") { transitive = false }
+    compile "io.github.nucleuspowered:nucleus-api:1.2.2-S7.0"
 }
 
 jar.enabled = false
