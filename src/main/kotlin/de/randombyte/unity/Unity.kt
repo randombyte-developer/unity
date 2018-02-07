@@ -13,6 +13,7 @@ import de.randombyte.unity.commands.*
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
+import org.bstats.sponge.Metrics
 import org.slf4j.Logger
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments.player
@@ -20,7 +21,6 @@ import org.spongepowered.api.command.spec.CommandSpec
 import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.event.Listener
-import org.spongepowered.api.event.filter.Getter
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GameStartingServerEvent
@@ -38,12 +38,13 @@ import java.util.*
 class Unity @Inject constructor(
         private val logger: Logger,
         @DefaultConfig(sharedRoot = true) configurationLoader: ConfigurationLoader<CommentedConfigurationNode>,
+        private val metrics: Metrics,
         private val pluginContainer: PluginContainer
 ) {
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "2.0"
+        const val VERSION = "2.1"
         const val AUTHOR = "RandomByte"
 
         const val NUCLEUS_ID = "nucleus"
@@ -87,16 +88,18 @@ class Unity @Inject constructor(
     }
 
     @Listener
-    fun onChangeServiceProvider(event: ChangeServiceProviderEvent, @Getter("getNewProvider") messageTokenService: NucleusMessageTokenService) {
-        messageTokenService.register(pluginContainer, NucleusMessageTokenService.TokenParser { tokenInput, source, _ ->
-            if (tokenInput != "marry" || source !is Player) return@TokenParser Optional.empty()
+    fun onChangeServiceProvider(event: ChangeServiceProviderEvent) {
+        if (event.newProvider.javaClass.name != "io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService") return
+        (event.newProvider as NucleusMessageTokenService).register(pluginContainer,
+                NucleusMessageTokenService.TokenParser { tokenInput, source, _ ->
+                    if (tokenInput != "marry" || source !is Player) return@TokenParser Optional.empty()
 
-            val config = configManager.get()
-            if (config.unities.getUnity(source.uniqueId) == null) {
-                return@TokenParser Optional.empty()
-            }
+                    val config = configManager.get()
+                    if (config.unities.getUnity(source.uniqueId) == null) {
+                        return@TokenParser Optional.empty()
+                    }
 
-            return@TokenParser config.marriedPrefix.toOptional()
+                    return@TokenParser config.marriedPrefix.toOptional()
         })
     }
 

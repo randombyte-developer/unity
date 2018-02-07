@@ -2,16 +2,17 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.10"
     id "org.jetbrains.kotlin.kapt" version "1.2.10"
     id "com.github.johnrengelman.shadow" version "1.2.4"
-    //id "flavor.pie.promptsign" version "1.0.2"
+    id "flavor.pie.promptsign" version "1.0.2"
 }
 
 group "de.randombyte"
-version "2.0"
+version "2.1"
 
 repositories {
     jcenter()
     maven { url "https://repo.spongepowered.org/maven/" }
     maven { url "https://jitpack.io" }
+    maven { url "http://repo.bstats.org/content/repositories/releases" }
     maven {
         name = "nucleus"
         url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
@@ -27,6 +28,7 @@ dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.10"
     kapt "org.spongepowered:spongeapi:7.0.0"
     shadow("com.github.randombyte-developer.kosp:kosp:v1.1") { transitive = false }
+    shadow "org.bstats:bstats-sponge:1.2"
     compile "io.github.nucleuspowered:nucleus-api:1.2.2-S7.0"
 }
 
@@ -37,11 +39,12 @@ shadowJar {
 
     relocate "kotlin", "de.randombyte.unity.shaded.kotlin"
     relocate "de.randombyte.kosp", "de.randombyte.unity.shaded.kosp"
+    relocate "org.bstats", "de.randombyte.unity.shaded.bstats"
 
     classifier = null // Remove '-all' suffix from output file name
 }
 build.dependsOn shadowJar
-//signArchives.dependsOn shadowJar
+signArchives.dependsOn shadowJar
 
 compileKotlin {
     kotlinOptions {
