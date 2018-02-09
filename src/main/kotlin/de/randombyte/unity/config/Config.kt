@@ -1,4 +1,4 @@
-package de.randombyte.unity
+package de.randombyte.unity.config
 
 import de.randombyte.kosp.extensions.*
 import de.randombyte.kosp.fixedTextTemplateOf
@@ -15,9 +15,10 @@ import java.util.*
 @ConfigSerializable
 data class Config(
         @Setting val unities: List<Unity> = emptyList(),
-        @Setting val texts: Texts = Config.Texts(),
+        @Setting val texts: Texts = Texts(),
         @Setting val divorceCooldown: Duration = Duration.ofDays(1),
-        @Setting val marriedPrefix: Text = "[".red() + "♥".darkRed() + "]".red()
+        @Setting val marriedPrefix: Text = "[".red() + "♥".darkRed() + "]".red(),
+        @Setting(comment = "Shift-right-click your partner to spawn heart particles.") val kissingEnabled: Boolean = true
 ) {
     @ConfigSerializable
     data class Unity(
@@ -76,7 +77,7 @@ data class Config(
                     "Sent gift to ".aqua(), "otherMember".toArg().white(), "!".aqua()
             ),
             @Setting val receivedGift: TextTemplate = fixedTextTemplateOf(
-                    "Received gift from".aqua(), "otherMember".toArg().white(), "!".aqua()
+                    "Received gift from ".aqua(), "otherMember".toArg().white(), "!".aqua()
             ),
 
             @Setting val helpCommandTitle: Text = "Marriages".yellow(),
@@ -85,6 +86,7 @@ data class Config(
                     "- /marry <name> - Marry a player".toText(),
                     "- /marry accept - Accept the proposal".toText(),
                     "- /marry decline - Decline the proposal".toText(),
+                    "- /marry list - List all couples".toText(),
                     "- /marry divorce - Divorce from your partner".toText(),
                     "- /marry tp - Teleport to your partner".toText(),
                     "- /marry gift - Gift the item you are holding to your partner".toText(),

@@ -1,10 +1,10 @@
 package de.randombyte.unity.commands
 
-import de.randombyte.kosp.config.ConfigManager
 import de.randombyte.kosp.config.serializers.duration.SimpleDurationTypeSerializer
 import de.randombyte.kosp.extensions.getUser
 import de.randombyte.kosp.extensions.red
-import de.randombyte.unity.Config
+import de.randombyte.unity.config.Config
+import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
@@ -13,8 +13,8 @@ import java.time.Duration
 import java.time.Instant
 
 class DivorceCommand(
-        val configManager: ConfigManager<Config>
-) : UnityCommand(getConfig = configManager::get) {
+        configAccessor: ConfigAccessor
+) : UnityCommand(configAccessor) {
     override fun executedByUnityMember(player: Player, args: CommandContext, thisUnity: Config.Unity, config: Config): CommandResult {
         val firstAllowedDivorceDateMillis = thisUnity.date.toInstant().toEpochMilli().plus(config.divorceCooldown.toMillis())
         val remainingMillis = firstAllowedDivorceDateMillis - Instant.now().toEpochMilli()
@@ -24,7 +24,7 @@ class DivorceCommand(
         }
 
         val newConfig = config.copy(unities = config.unities - thisUnity)
-        configManager.save(newConfig)
+        configAccessor.set(newConfig)
 
         val otherMember = thisUnity.getOtherMember(player.uniqueId)
         val otherMemberName = otherMember.getUser()?.name ?: "Unknown"

@@ -1,7 +1,7 @@
 package de.randombyte.unity.commands
 
 import de.randombyte.kosp.extensions.toText
-import de.randombyte.unity.Config
+import de.randombyte.unity.config.Config
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.entity.living.player.Player

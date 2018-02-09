@@ -1,10 +1,9 @@
 package de.randombyte.unity.commands
 
 import de.randombyte.kosp.PlayerExecutedCommand
-import de.randombyte.kosp.config.ConfigManager
 import de.randombyte.kosp.extensions.toText
-import de.randombyte.unity.Config
 import de.randombyte.unity.Unity
+import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
@@ -12,7 +11,7 @@ import org.spongepowered.api.entity.living.player.Player
 import java.util.*
 
 class CancelRequestCommand(
-        val configManager: ConfigManager<Config>,
+        val configAccessor: ConfigAccessor,
         val getRequests: () -> Map<UUID, List<UUID>>,
         val removeRequest: (requester: UUID, requestee: UUID) -> Unit
 ) : PlayerExecutedCommand() {
@@ -24,7 +23,7 @@ class CancelRequestCommand(
 
         removeRequest(player.uniqueId, requestee.uniqueId)
 
-        val config = configManager.get()
+        val config = configAccessor.get()
         requestee.sendMessage(config.texts.cancelledRequestMessage.apply(mapOf(
                 "requester" to player.name
         )).build())

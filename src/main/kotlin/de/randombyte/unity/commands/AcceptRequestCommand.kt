@@ -1,10 +1,10 @@
 package de.randombyte.unity.commands
 
 import de.randombyte.kosp.PlayerExecutedCommand
-import de.randombyte.kosp.config.ConfigManager
 import de.randombyte.kosp.extensions.toText
-import de.randombyte.unity.Config
 import de.randombyte.unity.Unity
+import de.randombyte.unity.config.Config
+import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
@@ -13,7 +13,7 @@ import java.time.Instant
 import java.util.*
 
 class AcceptRequestCommand(
-        val configManager: ConfigManager<Config>,
+        val configAccessor: ConfigAccessor,
         val getRequests: () -> Map<UUID, List<UUID>>,
         val removeRequest: (requester: UUID, requestee: UUID) -> Unit
 ) : PlayerExecutedCommand() {
@@ -23,7 +23,7 @@ class AcceptRequestCommand(
             throw CommandException("You don't have a request from '${requester.name}'!".toText())
         }
 
-        val config = configManager.get()
+        val config = configAccessor.get()
         requireSingle(player, requester, config.unities)
 
         removeRequest(requester.uniqueId, player.uniqueId)
@@ -32,7 +32,7 @@ class AcceptRequestCommand(
                 member2 = player.uniqueId,
                 date = Date.from(Instant.now())
         ))
-        configManager.save(newConfig)
+        configAccessor.set(newConfig)
 
         val broadcastMessage = config.texts.unityBroadcast.apply(mapOf(
                 "member1" to requester.name,

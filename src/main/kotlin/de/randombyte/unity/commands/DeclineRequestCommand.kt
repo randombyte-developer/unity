@@ -1,10 +1,9 @@
 package de.randombyte.unity.commands
 
 import de.randombyte.kosp.PlayerExecutedCommand
-import de.randombyte.kosp.config.ConfigManager
 import de.randombyte.kosp.extensions.toText
-import de.randombyte.unity.Config
 import de.randombyte.unity.Unity
+import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
@@ -12,7 +11,7 @@ import org.spongepowered.api.entity.living.player.Player
 import java.util.*
 
 class DeclineRequestCommand(
-        val configManager: ConfigManager<Config>,
+        val configAccessor: ConfigAccessor,
         val getRequests: () -> Map<UUID, List<UUID>>,
         val removeRequest: (requester: UUID, requestee: UUID) -> Unit
 ) : PlayerExecutedCommand() {
@@ -24,7 +23,7 @@ class DeclineRequestCommand(
 
         removeRequest(requester.uniqueId, player.uniqueId)
 
-        val broadcastMessage = configManager.get().texts.declinedRequestBroadcast.apply(mapOf(
+        val broadcastMessage = configAccessor.get().texts.declinedRequestBroadcast.apply(mapOf(
                 "requester" to requester.name,
                 "requestee" to player.name)).build()
         broadcast(broadcastMessage)
