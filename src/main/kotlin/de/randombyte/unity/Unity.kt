@@ -3,8 +3,8 @@ package de.randombyte.unity
 import com.flowpowered.math.vector.Vector3d
 import com.google.inject.Inject
 import de.randombyte.kosp.config.ConfigManager
-import de.randombyte.kosp.extensions.toOptional
-import de.randombyte.kosp.extensions.toText
+import de.randombyte.kosp.config.serializers.date.SimpleDateTypeSerializer
+import de.randombyte.kosp.extensions.*
 import de.randombyte.unity.Unity.Companion.AUTHOR
 import de.randombyte.unity.Unity.Companion.ID
 import de.randombyte.unity.Unity.Companion.NAME
@@ -38,6 +38,8 @@ import org.spongepowered.api.event.service.ChangeServiceProviderEvent
 import org.spongepowered.api.plugin.Dependency
 import org.spongepowered.api.plugin.Plugin
 import org.spongepowered.api.plugin.PluginContainer
+import org.spongepowered.api.text.action.TextActions
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Plugin(id = ID,
@@ -54,7 +56,7 @@ class Unity @Inject constructor(
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "2.2"
+        const val VERSION = "2.2.1"
         const val AUTHOR = "RandomByte"
 
         const val NUCLEUS_ID = "nucleus"
@@ -63,6 +65,8 @@ class Unity @Inject constructor(
         const val PLAYER_PERMISSION = "$ROOT_PERMISSION.player"
 
         const val PLAYER_ARG = "player"
+
+        val dateOutputFormat = SimpleDateFormat("dd.MM.yyyy")
     }
 
     private val configManager = ConfigManager(
@@ -120,17 +124,19 @@ class Unity @Inject constructor(
 
     @Listener
     fun onChangeServiceProvider(event: ChangeServiceProviderEvent) {
-        if (event.newProvider.javaClass.name != "io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService") return
+        if (event.service.name != "io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService") return
         (event.newProvider as NucleusMessageTokenService).register(pluginContainer,
                 NucleusMessageTokenService.TokenParser { tokenInput, source, _ ->
                     if (tokenInput != "marry" || source !is Player) return@TokenParser Optional.empty()
 
                     val config = configManager.get()
-                    if (config.unities.getUnity(source.uniqueId) == null) {
-                        return@TokenParser Optional.empty()
-                    }
+                    val unity = config.unities.getUnity(source.uniqueId) ?: return@TokenParser Optional.empty()
 
-                    return@TokenParser config.marriedPrefix.toOptional()
+                    val otherMemberName = unity.getOtherMember(source.uniqueId).getUser()?.name ?: "Unknown"
+                    SimpleDateTypeSerializer
+                    val hoverText = "Married to ".toText() + otherMemberName.gold() + ", " + dateOutputFormat.format(unity.date)
+
+                    return@TokenParser config.marriedPrefix.action(TextActions.showText(hoverText)).toOptional()
         })
     }
 
