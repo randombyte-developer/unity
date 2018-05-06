@@ -72,7 +72,6 @@ class Unity @Inject constructor(
     private val configManager = ConfigManager(
             configLoader = configurationLoader,
             clazz = Config::class.java,
-            hyphenSeparatedKeys = true,
             simpleTextSerialization = true,
             simpleTextTemplateSerialization = true
     )

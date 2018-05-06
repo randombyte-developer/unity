@@ -14,18 +14,18 @@ import java.util.*
 
 @ConfigSerializable
 data class Config(
-        @Setting val unities: List<Unity> = emptyList(),
-        @Setting val texts: Texts = Texts(),
-        @Setting val divorceCooldown: Duration = Duration.ofDays(1),
-        @Setting val marriedPrefix: Text = "[".red() + "♥".darkRed() + "]".red(),
-        @Setting(comment = "Shift-right-click your partner to spawn heart particles.") val kissingEnabled: Boolean = true
+        @Setting("unities") val unities: List<Unity> = emptyList(),
+        @Setting("texts") val texts: Texts = Texts(),
+        @Setting("divorce-cooldown") val divorceCooldown: Duration = Duration.ofDays(1),
+        @Setting("married-prefix") val marriedPrefix: Text = "[".red() + "♥".darkRed() + "]".red(),
+        @Setting("kissing-enabled", comment = "Shift-right-click your partner to spawn heart particles.") val kissingEnabled: Boolean = true
 ) {
     @ConfigSerializable
     data class Unity(
-            @Setting val member1: UUID = UUID(0, 0),
-            @Setting val member2: UUID = UUID(0, 0),
-            @Setting val home: Location<World>? = null,
-            @Setting val date: Date = Date.from(Instant.EPOCH)
+            @Setting("member1") val member1: UUID = UUID(0, 0),
+            @Setting("member2") val member2: UUID = UUID(0, 0),
+            @Setting("home") val home: Location<World>? = null,
+            @Setting("date") val date: Date = Date.from(Instant.EPOCH)
     ) {
         fun sendMessage(text: Text) {
             member1.getPlayer()?.sendMessage(text)
@@ -41,47 +41,47 @@ data class Config(
 
     @ConfigSerializable
     class Texts(
-            @Setting val sentRequest: TextTemplate = fixedTextTemplateOf(
+            @Setting("sent-request") val sentRequest: TextTemplate = fixedTextTemplateOf(
                     "Proposal sent to ".aqua(), "requestee".toArg().white(), "!".aqua()),
 
-            @Setting val gotRequest: TextTemplate = fixedTextTemplateOf(
+            @Setting("got-request") val gotRequest: TextTemplate = fixedTextTemplateOf(
                     "requester".toArg().white(), " wants to marry you!".aqua()),
-            @Setting val acceptRequestAction: Text = "[ACCEPT]".green(),
-            @Setting val declineRequestAction: Text = "[DECLINE]".red(),
+            @Setting("accept-request-action") val acceptRequestAction: Text = "[ACCEPT]".green(),
+            @Setting("decline-request-action") val declineRequestAction: Text = "[DECLINE]".red(),
 
-            @Setting val cancelledRequestMessage: TextTemplate = fixedTextTemplateOf(
+            @Setting("cancelled-request-message") val cancelledRequestMessage: TextTemplate = fixedTextTemplateOf(
                     "requester".toArg().white(), " cancelled the request!".aqua()
             ),
 
-            @Setting val sentCancellation: TextTemplate = fixedTextTemplateOf(
+            @Setting("sent-cancellation") val sentCancellation: TextTemplate = fixedTextTemplateOf(
                     "Sent cancellation to ".aqua(), "requestee".toArg().white(), "!".aqua()
             ),
 
-            @Setting val requestBroadcast: TextTemplate = fixedTextTemplateOf(
+            @Setting("request-broadcast") val requestBroadcast: TextTemplate = fixedTextTemplateOf(
                     "requester".toArg().white(), " sent a proposal to ".aqua(), "requestee".toArg().white(), "!".aqua()),
 
-            @Setting val unityBroadcast: TextTemplate = fixedTextTemplateOf(
+            @Setting("unity-broadcast") val unityBroadcast: TextTemplate = fixedTextTemplateOf(
                     "member1".toArg().white(), " and ".aqua(), "member2".toArg().white(), " just got married!".aqua()),
 
-            @Setting val declinedRequestBroadcast: TextTemplate = fixedTextTemplateOf(
+            @Setting("declined-request-broadcast") val declinedRequestBroadcast: TextTemplate = fixedTextTemplateOf(
                     "requestee".toArg().white(), " declined to marry ".aqua(), "requester".toArg().white(), "!".aqua()),
 
-            @Setting val divorceBroadcast: TextTemplate = fixedTextTemplateOf(
+            @Setting("divorce-broadcast") val divorceBroadcast: TextTemplate = fixedTextTemplateOf(
                     "member1".toArg().white(), " just divorced from ".aqua(), "member2".toArg().white(), "!".aqua()),
 
-            @Setting val listCommandTitle: Text = "Marriages".yellow(),
-            @Setting val listCommandEntry: TextTemplate = fixedTextTemplateOf(
+            @Setting("list-command-title") val listCommandTitle: Text = "Marriages".yellow(),
+            @Setting("list-command-entry") val listCommandEntry: TextTemplate = fixedTextTemplateOf(
                     "- ".aqua(), "member1".toArg().white(), " is married to ".aqua(), "member2".toArg().white()),
 
-            @Setting val sentGift: TextTemplate = fixedTextTemplateOf(
+            @Setting("sent-gift") val sentGift: TextTemplate = fixedTextTemplateOf(
                     "Sent gift to ".aqua(), "otherMember".toArg().white(), "!".aqua()
             ),
-            @Setting val receivedGift: TextTemplate = fixedTextTemplateOf(
+            @Setting("received-gift") val receivedGift: TextTemplate = fixedTextTemplateOf(
                     "Received gift from ".aqua(), "otherMember".toArg().white(), "!".aqua()
             ),
 
-            @Setting val helpCommandTitle: Text = "Marriages".yellow(),
-            @Setting val helpCommandEntries: List<Text> = listOf(
+            @Setting("help-command-title") val helpCommandTitle: Text = "Marriages".yellow(),
+            @Setting("help-command-entries") val helpCommandEntries: List<Text> = listOf(
                     "- /marry help - Shows this page".toText(),
                     "- /marry <name> - Marry a player".toText(),
                     "- /marry accept - Accept the proposal".toText(),

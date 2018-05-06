@@ -1,6 +1,6 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.10"
-    id "org.jetbrains.kotlin.kapt" version "1.2.10"
+    id "org.jetbrains.kotlin.jvm" version "1.2.41"
+    id "org.jetbrains.kotlin.kapt" version "1.2.41"
     id "com.github.johnrengelman.shadow" version "1.2.4"
     id "flavor.pie.promptsign" version "1.0.2"
 }
@@ -25,9 +25,9 @@ configurations {
 }
 
 dependencies {
-    shadow "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.10"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
     kapt "org.spongepowered:spongeapi:7.0.0"
-    shadow("com.github.randombyte-developer.kosp:kosp:v1.1") { transitive = false }
+    shadow("com.github.randombyte-developer.kosp:kosp:v1.9.1") { transitive = false }
     shadow "org.bstats:bstats-sponge:1.2"
     compile "io.github.nucleuspowered:nucleus-api:1.2.2-S7.0"
 }
