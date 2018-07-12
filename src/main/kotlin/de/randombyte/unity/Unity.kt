@@ -56,7 +56,7 @@ class Unity @Inject constructor(
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "2.2.1"
+        const val VERSION = "2.2.2"
         const val AUTHOR = "RandomByte"
 
         const val NUCLEUS_ID = "nucleus"

@@ -2,6 +2,7 @@ package de.randombyte.unity.commands
 
 import de.randombyte.kosp.extensions.green
 import de.randombyte.unity.config.Config
+import de.randombyte.unity.config.Config.Unity.ConfigLocation
 import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
@@ -12,7 +13,8 @@ class SetHomeCommand(
 ) : UnityCommand(configAccessor) {
     override fun executedByUnityMember(player: Player, args: CommandContext, thisUnity: Config.Unity, config: Config): CommandResult {
         val newHome = player.location
-        configAccessor.set(config.copy(unities = (config.unities - thisUnity) + thisUnity.copy(home = newHome)))
+        configAccessor.set(config.copy(
+                unities = (config.unities - thisUnity) + thisUnity.copy(home = ConfigLocation(newHome))))
 
         thisUnity.sendMessage("New home set".green())
 

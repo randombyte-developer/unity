@@ -2,8 +2,11 @@ package de.randombyte.unity.config
 
 import de.randombyte.kosp.extensions.*
 import de.randombyte.kosp.fixedTextTemplateOf
+import de.randombyte.unity.config.Config.Unity.HomeLocation.*
+import de.randombyte.unity.config.Config.Unity.HomeLocation.Set
 import ninja.leaping.configurate.objectmapping.Setting
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable
+import org.spongepowered.api.Sponge
 import org.spongepowered.api.text.Text
 import org.spongepowered.api.text.TextTemplate
 import org.spongepowered.api.world.Location
@@ -24,9 +27,22 @@ data class Config(
     data class Unity(
             @Setting("member1") val member1: UUID = UUID(0, 0),
             @Setting("member2") val member2: UUID = UUID(0, 0),
-            @Setting("home") val home: Location<World>? = null,
+            @Setting("home") val home: ConfigLocation? = null,
             @Setting("date") val date: Date = Date.from(Instant.EPOCH)
     ) {
+
+        // retro fits the Sponge Location serialization format, but we have control over when to
+        // load and construct the Location
+        @ConfigSerializable
+        class ConfigLocation(
+                @Setting("WorldUuid") val worldUuid: UUID = UUID(0, 0),
+                @Setting("X") val x: Double = 0.0,
+                @Setting("Y") val y: Double = 0.0,
+                @Setting("Z") val z: Double = 0.0
+        ) {
+            constructor(location: Location<World>) : this(location.extent.uniqueId, location.x, location.y, location.z)
+        }
+
         fun sendMessage(text: Text) {
             member1.getPlayer()?.sendMessage(text)
             member2.getPlayer()?.sendMessage(text)
@@ -36,6 +52,18 @@ data class Config(
             member1 == member -> member2
             member2 == member -> member1
             else -> throw RuntimeException("Getting other member failed, report to developer!")
+        }
+
+        sealed class HomeLocation {
+            object NotSet : HomeLocation()
+            object Unreachable : HomeLocation()
+            class Set(val location: Location<World>) : HomeLocation()
+        }
+
+        fun tryGetHomeLocation(): HomeLocation {
+            if (home == null) return NotSet
+            val world = Sponge.getServer().getWorld(home.worldUuid).orNull() ?: return Unreachable
+            return Set(world.getLocation(home.x, home.y, home.z))
         }
     }
 
