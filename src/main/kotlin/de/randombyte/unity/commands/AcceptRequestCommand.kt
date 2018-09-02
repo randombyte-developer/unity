@@ -37,7 +37,7 @@ class AcceptRequestCommand(
         val broadcastMessage = config.texts.unityBroadcast.apply(mapOf(
                 "member1" to requester.name,
                 "member2" to player.name)).build()
-        broadcast(broadcastMessage)
+        broadcastIfNotEmpty(broadcastMessage)
 
         return CommandResult.success()
     }

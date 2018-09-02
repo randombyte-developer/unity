@@ -15,7 +15,7 @@ class TeleportCommand(
     override fun executedByUnityMember(player: Player, args: CommandContext, thisUnity: Config.Unity, config: Config): CommandResult {
         val otherMember = thisUnity.getOtherMember(player.uniqueId).getUser()!!
         val otherPlayer = otherMember.player
-                .orElseThrow { throw CommandException("'${otherMember.name}' must be online to excute this command!".toText()) }
+                .orElseThrow { throw CommandException("'${otherMember.name}' must be online to execute this command!".toText()) }
 
         player.location = otherPlayer.location
 

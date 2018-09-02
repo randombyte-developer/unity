@@ -2,6 +2,7 @@ package de.randombyte.unity.config
 
 import de.randombyte.kosp.extensions.*
 import de.randombyte.kosp.fixedTextTemplateOf
+import de.randombyte.unity.commands.sendMessageIfNotEmpty
 import de.randombyte.unity.config.Config.Unity.HomeLocation.*
 import de.randombyte.unity.config.Config.Unity.HomeLocation.Set
 import ninja.leaping.configurate.objectmapping.Setting
@@ -44,8 +45,8 @@ data class Config(
         }
 
         fun sendMessage(text: Text) {
-            member1.getPlayer()?.sendMessage(text)
-            member2.getPlayer()?.sendMessage(text)
+            member1.getPlayer()?.sendMessageIfNotEmpty(text)
+            member2.getPlayer()?.sendMessageIfNotEmpty(text)
         }
 
         fun getOtherMember(member: UUID) = when {

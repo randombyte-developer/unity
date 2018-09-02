@@ -26,7 +26,7 @@ class DeclineRequestCommand(
         val broadcastMessage = configAccessor.get().texts.declinedRequestBroadcast.apply(mapOf(
                 "requester" to requester.name,
                 "requestee" to player.name)).build()
-        broadcast(broadcastMessage)
+        broadcastIfNotEmpty(broadcastMessage)
 
         return CommandResult.success()
     }

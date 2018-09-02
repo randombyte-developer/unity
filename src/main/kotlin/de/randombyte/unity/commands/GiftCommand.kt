@@ -25,8 +25,8 @@ class GiftCommand(
         otherPlayer.give(itemInHand)
         player.setItemInHand(HandTypes.MAIN_HAND, null)
 
-        otherPlayer.sendMessage(config.texts.receivedGift.apply(mapOf("otherMember" to player.name)).build())
-        player.sendMessage(config.texts.sentGift.apply(mapOf("otherMember" to otherPlayer.name)).build())
+        otherPlayer.sendMessageIfNotEmpty(config.texts.receivedGift.apply(mapOf("otherMember" to player.name)).build())
+        player.sendMessageIfNotEmpty(config.texts.sentGift.apply(mapOf("otherMember" to otherPlayer.name)).build())
 
         return CommandResult.success()
     }

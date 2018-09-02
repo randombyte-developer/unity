@@ -24,4 +24,10 @@ fun requireSingle(commandSource: Player, otherPlayer: Player, unities: List<Conf
 fun List<Config.Unity>.getUnity(playerUuid: UUID) = firstOrNull { (member1, member2) -> member1 == playerUuid || member2 == playerUuid }
 fun List<Config.Unity>.isSingle(playerUuid: UUID) = getUnity(playerUuid) == null
 
-fun broadcast(text: Text) = Sponge.getServer().broadcastChannel.send(text)
+fun broadcastIfNotEmpty(text: Text) {
+    if (!text.isEmpty) Sponge.getServer().broadcastChannel.send(text)
+}
+
+fun Player.sendMessageIfNotEmpty(text: Text) {
+    if (!text.isEmpty) this.sendMessage(text)
+}

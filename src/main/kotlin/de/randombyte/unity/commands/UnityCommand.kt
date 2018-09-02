@@ -16,7 +16,7 @@ abstract class UnityCommand(
         val config = configAccessor.get()
         val unities = config.unities
         val unity = unities.getUnity(player.uniqueId)
-                ?: throw CommandException("You must be married to someone to execute this command!".toText()) // TODO: change to 'unity'
+                ?: throw CommandException("You must be married to someone to execute this command!".toText())
         return executedByUnityMember(player, args, unity, config)
     }
 

@@ -32,7 +32,7 @@ class DivorceCommand(
         val divorceBroadcast = config.texts.divorceBroadcast.apply(mapOf(
                 "member1" to player.name,
                 "member2" to otherMemberName)).build()
-        broadcast(divorceBroadcast)
+        broadcastIfNotEmpty(divorceBroadcast)
 
         return CommandResult.success()
     }

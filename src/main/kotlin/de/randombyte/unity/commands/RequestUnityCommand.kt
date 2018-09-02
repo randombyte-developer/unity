@@ -32,11 +32,11 @@ class RequestUnityCommand(
         val acceptRequest = config.texts.acceptRequestAction.action(TextActions.runCommand("/unity accept ${player.name}"))
         val declineRequest = config.texts.declineRequestAction.action(TextActions.runCommand("/unity decline ${player.name}"))
         val requestMessage = config.texts.gotRequest.apply(mapOf("requester" to player.name)).build()
-        requestee.sendMessage(requestMessage + " " + acceptRequest + " " + declineRequest)
+        requestee.sendMessageIfNotEmpty(requestMessage + " " + acceptRequest + " " + declineRequest)
 
-        player.sendMessage(config.texts.sentRequest.apply(mapOf("requestee" to requestee.name)).build())
+        player.sendMessageIfNotEmpty(config.texts.sentRequest.apply(mapOf("requestee" to requestee.name)).build())
 
-        broadcast(config.texts.requestBroadcast.apply(mapOf(
+        broadcastIfNotEmpty(config.texts.requestBroadcast.apply(mapOf(
                 "requester" to player.name,
                 "requestee" to requestee.name
         )).build())

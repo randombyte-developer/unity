@@ -24,11 +24,11 @@ class CancelRequestCommand(
         removeRequest(player.uniqueId, requestee.uniqueId)
 
         val config = configAccessor.get()
-        requestee.sendMessage(config.texts.cancelledRequestMessage.apply(mapOf(
+        requestee.sendMessageIfNotEmpty(config.texts.cancelledRequestMessage.apply(mapOf(
                 "requester" to player.name
         )).build())
 
-        player.sendMessage(config.texts.sentCancellation.apply(mapOf(
+        player.sendMessageIfNotEmpty(config.texts.sentCancellation.apply(mapOf(
                 "requestee" to requestee.name
         )).build())
 
