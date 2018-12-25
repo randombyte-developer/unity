@@ -16,7 +16,7 @@ import de.randombyte.unity.config.ConfigAccessor
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
-import org.bstats.sponge.Metrics
+import org.bstats.sponge.Metrics2
 import org.slf4j.Logger
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.args.GenericArguments.player
@@ -50,13 +50,13 @@ import java.util.*
 class Unity @Inject constructor(
         private val logger: Logger,
         @DefaultConfig(sharedRoot = true) configurationLoader: ConfigurationLoader<CommentedConfigurationNode>,
-        private val metrics: Metrics,
+        private val metrics: Metrics2,
         private val pluginContainer: PluginContainer
 ) {
     companion object {
         const val ID = "unity"
         const val NAME = "Unity"
-        const val VERSION = "2.3.0"
+        const val VERSION = "2.3.1"
         const val AUTHOR = "RandomByte"
 
         const val NUCLEUS_ID = "nucleus"
