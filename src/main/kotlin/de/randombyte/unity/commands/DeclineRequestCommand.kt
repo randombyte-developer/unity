@@ -17,7 +17,7 @@ class DeclineRequestCommand(
 ) : PlayerExecutedCommand() {
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
         val requester = args.getOne<Player>(Unity.PLAYER_ARG).get()
-        if (!requester.checkRequester(requestee = player, requests = getRequests())) {
+        if (!requester.hasRequested(requestee = player, requests = getRequests())) {
             throw CommandException("You don't have a request from '${requester.name}'!".toText())
         }
 

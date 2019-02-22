@@ -1,43 +1,38 @@
 package de.randombyte.unity.commands
 
 import de.randombyte.kosp.PlayerExecutedCommand
+import de.randombyte.kosp.extensions.deserialize
+import de.randombyte.kosp.extensions.replace
 import de.randombyte.kosp.extensions.toText
 import de.randombyte.unity.Unity
-import de.randombyte.unity.config.Config
-import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.args.CommandContext
 import org.spongepowered.api.entity.living.player.Player
-import java.time.Instant
-import java.util.*
 
-class AcceptRequestCommand(
-        val configAccessor: ConfigAccessor,
-        val getRequests: () -> Map<UUID, List<UUID>>,
-        val removeRequest: (requester: UUID, requestee: UUID) -> Unit
-) : PlayerExecutedCommand() {
+class AcceptRequestCommand : PlayerExecutedCommand() {
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
         val requester = args.getOne<Player>(Unity.PLAYER_ARG).get()
-        if (!requester.checkRequester(requestee = player, requests = getRequests())) {
+
+        val requests = Unity.INSTANCE.requests
+        if (!requests.hasRequest(requestee = player.uniqueId, requester = requester.uniqueId)) {
             throw CommandException("You don't have a request from '${requester.name}'!".toText())
         }
 
-        val config = configAccessor.get()
-        requireSingle(player, requester, config.unities)
+        val databaseConfigHolder = Unity.INSTANCE.configAccessor.unitiesDatabase
+        val databaseConfig = databaseConfigHolder.get()
+        val textsConfig = Unity.INSTANCE.configAccessor.texts.get()
 
-        removeRequest(requester.uniqueId, player.uniqueId)
-        val newConfig = config.copy(unities = config.unities + Config.Unity(
-                member1 = requester.uniqueId,
-                member2 = player.uniqueId,
-                date = Date.from(Instant.now())
-        ))
-        configAccessor.set(newConfig)
+        databaseConfig.requireSingle(self = player, other = requester)
 
-        val broadcastMessage = config.texts.unityBroadcast.apply(mapOf(
+        requests.removeRequest(requestee = player.uniqueId, requester = requester.uniqueId)
+        val newConfig = databaseConfig.newUnity(player.uniqueId, requester.uniqueId)
+        databaseConfigHolder.save(newConfig)
+
+        broadcastIfNotEmpty(textsConfig.unityBroadcast.replace(
                 "member1" to requester.name,
-                "member2" to player.name)).build()
-        broadcastIfNotEmpty(broadcastMessage)
+                "member2" to player.name
+        ).deserialize())
 
         return CommandResult.success()
     }

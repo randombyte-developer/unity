@@ -1,6 +1,13 @@
 package de.randombyte.unity.config
 
-abstract class ConfigAccessor {
-    abstract fun get(): Config
-    abstract fun set(config: Config)
+import de.randombyte.kosp.config.ConfigAccessor
+import java.nio.file.Path
+
+class ConfigAccessor(configPath: Path) : ConfigAccessor(configPath) {
+
+    val general = getConfigHolder<GeneralConfig>("general.conf")
+    val unitiesDatabase = getConfigHolder<UnitiesDatabaseConfig>("unities.db")
+    val texts = getConfigHolder<TextsConfig>("texts.conf")
+
+    override val holders = listOf(general, unitiesDatabase, texts)
 }

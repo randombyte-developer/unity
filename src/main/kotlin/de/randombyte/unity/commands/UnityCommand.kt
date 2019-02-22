@@ -2,7 +2,7 @@ package de.randombyte.unity.commands
 
 import de.randombyte.kosp.PlayerExecutedCommand
 import de.randombyte.kosp.extensions.toText
-import de.randombyte.unity.config.Config
+import de.randombyte.unity.config.OldConfig
 import de.randombyte.unity.config.ConfigAccessor
 import org.spongepowered.api.command.CommandException
 import org.spongepowered.api.command.CommandResult
@@ -20,5 +20,5 @@ abstract class UnityCommand(
         return executedByUnityMember(player, args, unity, config)
     }
 
-    abstract fun executedByUnityMember(player: Player, args: CommandContext, thisUnity: Config.Unity, config: Config): CommandResult
+    abstract fun executedByUnityMember(player: Player, args: CommandContext, thisUnity: OldConfig.Unity, config: OldConfig): CommandResult
 }

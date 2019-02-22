@@ -17,7 +17,7 @@ class CancelRequestCommand(
 ) : PlayerExecutedCommand() {
     override fun executedByPlayer(player: Player, args: CommandContext): CommandResult {
         val requestee = args.getOne<Player>(Unity.PLAYER_ARG).get()
-        if (!player.checkRequester(requestee = requestee, requests = getRequests())) {
+        if (!player.hasRequested(requestee = requestee, requests = getRequests())) {
             throw CommandException("You don't have a request to '${requestee.name}'!".toText())
         }
 
