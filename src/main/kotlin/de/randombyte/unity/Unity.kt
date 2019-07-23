@@ -61,6 +61,9 @@ class Unity @Inject constructor(
 
         const val NUCLEUS_ID = "nucleus"
 
+        const val ROOT_PERMISSION = ID
+        const val PLAYER_PERMISSION = "$ROOT_PERMISSION.player"
+
         const val PLAYER_ARG = "player"
 
         val dateOutputFormat = SimpleDateFormat("dd.MM.yyyy")
@@ -153,7 +156,7 @@ class Unity @Inject constructor(
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 // the root unity/marry command is the 'request unity'-command
-                .permission(unity.marry)
+                .permission("$PLAYER_PERMISSION.marry")
                 .arguments(player(PLAYER_ARG.toText()))
                 .executor(RequestUnityCommand(
                         configAccessor,
@@ -166,45 +169,45 @@ class Unity @Inject constructor(
                 ))
 
                 .child(CommandSpec.builder()
-                        .permission("unity.help")
+                        .permission("$PLAYER_PERMISSION.help")
                         .executor(HelpCommand(configAccessor))
                         .build(), "help")
                 .child(CommandSpec.builder()
-                        .permission("unity.accept")
+                        .permission("$PLAYER_PERMISSION.accept")
                         .arguments(player(PLAYER_ARG.toText()))
                         .executor(AcceptRequestCommand(configAccessor, this::unityRequests, removeRequest))
                         .build(), "accept")
                 .child(CommandSpec.builder()
-                        .permission("unity.decline")
+                        .permission("$PLAYER_PERMISSION.decline")
                         .arguments(player(PLAYER_ARG.toText()))
                         .executor(DeclineRequestCommand(configAccessor, this::unityRequests, removeRequest))
                         .build(), "decline")
                 .child(CommandSpec.builder()
-                        .permission("unity.cancel")
+                        .permission("$PLAYER_PERMISSION.cancel")
                         .arguments(player(PLAYER_ARG.toText()))
                         .executor(CancelRequestCommand(configAccessor, this::unityRequests, removeRequest))
                         .build(), "cancel")
                 .child(CommandSpec.builder()
-                        .permission("unity.list")
+                        .permission("$PLAYER_PERMISSION.list")
                         .executor(ListUnitiesCommand(configAccessor))
                         .build(), "list")
                 .child(CommandSpec.builder()
-                        .permission("unity.divorce")
+                        .permission("$PLAYER_PERMISSION.divorce")
                         .executor(DivorceCommand(configAccessor))
                         .build(), "divorce")
                 .child(CommandSpec.builder()
-                        .permission("unity.tp")
+                        .permission("$PLAYER_PERMISSION.tp")
                         .executor(TeleportCommand(configAccessor))
                         .build(), "teleport", "tp")
                 .child(CommandSpec.builder()
-                        .permission("unity.gift")
+                        .permission("$PLAYER_PERMISSION.gift")
                         .executor(GiftCommand(configAccessor))
                         .build(), "gift")
                 .child(CommandSpec.builder()
-                        .permission("unity.home.home")
+                        .permission("$PLAYER_PERMISSION.home.home")
                         .executor(HomeCommand(configAccessor))
                         .child(CommandSpec.builder()
-                                .permission("unity.home.set")
+                                .permission("$PLAYER_PERMISSION.home.set")
                                 .executor(SetHomeCommand(configAccessor))
                                 .build(), "set")
                         .build(), "home")
