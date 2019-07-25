@@ -16,6 +16,7 @@ import de.randombyte.unity.config.ConfigAccessor
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService
 import ninja.leaping.configurate.commented.CommentedConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
+import org.apache.commons.lang3.RandomUtils
 import org.bstats.sponge.Metrics2
 import org.slf4j.Logger
 import org.spongepowered.api.Sponge
@@ -34,13 +35,16 @@ import org.spongepowered.api.event.filter.cause.Root
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameInitializationEvent
 import org.spongepowered.api.event.game.state.GameStartingServerEvent
+import org.spongepowered.api.event.network.ClientConnectionEvent
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent
 import org.spongepowered.api.plugin.Dependency
 import org.spongepowered.api.plugin.Plugin
 import org.spongepowered.api.plugin.PluginContainer
+import org.spongepowered.api.scheduler.Task
 import org.spongepowered.api.text.action.TextActions
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Plugin(id = ID,
         name = NAME,
@@ -110,6 +114,13 @@ class Unity @Inject constructor(
         // do this here to ensure all worlds are loaded for location deserialization
         loadConfig()
         saveConfig()
+
+        if (needsMotivationalSpeech()) {
+            Task.builder()
+                    .delay(RandomUtils.nextLong(80, 130), TimeUnit.SECONDS)
+                    .execute { -> Messages.motivationalSpeech.forEach { it.sendTo(Sponge.getServer().console) } }
+                    .submit(this)
+        }
     }
 
     @Listener
@@ -221,4 +232,26 @@ class Unity @Inject constructor(
     private fun saveConfig() {
         configManager.save(config)
     }
+
+
+    val metricsNoteSent = mutableSetOf<UUID>()
+
+    @Listener
+    fun onPlayerJoin(event: ClientConnectionEvent.Join) {
+        val uuid = event.targetEntity.uniqueId
+        if (needsMotivationalSpeech(event.targetEntity)) {
+            Task.builder()
+                    .delay(RandomUtils.nextLong(10, 50), TimeUnit.SECONDS)
+                    .execute { ->
+                        val player = uuid.getPlayer() ?: return@execute
+                        metricsNoteSent += uuid
+                        Messages.motivationalSpeech.forEach { it.sendTo(player) }
+                    }
+                    .submit(this)
+        }
+    }
+
+    private fun needsMotivationalSpeech(player: Player? = null) = config.enableMetricsMessages &&
+            !Sponge.getMetricsConfigManager().areMetricsEnabled(this) &&
+            ((player == null) || player.uniqueId !in metricsNoteSent && player.hasPermission("nucleus.mute.base")) // also passes OPs without Nucleus
 }

@@ -2,6 +2,7 @@ package de.randombyte.unity.config
 
 import de.randombyte.kosp.extensions.*
 import de.randombyte.kosp.fixedTextTemplateOf
+import de.randombyte.unity.Messages
 import de.randombyte.unity.commands.sendMessageIfNotEmpty
 import de.randombyte.unity.config.Config.Unity.HomeLocation.*
 import de.randombyte.unity.config.Config.Unity.HomeLocation.Set
@@ -22,7 +23,8 @@ data class Config(
         @Setting("texts") val texts: Texts = Texts(),
         @Setting("divorce-cooldown") val divorceCooldown: Duration = Duration.ofDays(1),
         @Setting("married-prefix") val marriedPrefix: Text = "[".red() + "♥".darkRed() + "]".red(),
-        @Setting("kissing-enabled", comment = "Shift-right-click your partner to spawn heart particles.") val kissingEnabled: Boolean = true
+        @Setting("kissing-enabled", comment = "Shift-right-click your partner to spawn heart particles.") val kissingEnabled: Boolean = true,
+        @Setting("enable-metrics-messages", comment = Messages.configComment) val enableMetricsMessages: Boolean = true
 ) {
     @ConfigSerializable
     data class Unity(
